@@ -25,3 +25,4 @@ Compile brainfuck
 ## TODO
 
 - [ ] Currently just executes the code, choose assembly type and turn token-stream into that
+- [ ] Maybe https://flatassembler.net/ ?

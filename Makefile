@@ -1,10 +1,10 @@
 all: main
 
 main: src/main.c
-	gcc -g src/main.c -o bin/main
+	gcc -g src/main.c -o bin/bigbrains
 
 run: main
-	./main examples/hello-world-short.bf
+	./bin/bigbrains examples/hello-world-short.bf
 
 clean: 
 	rm -v main
