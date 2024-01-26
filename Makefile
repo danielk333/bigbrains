@@ -1,10 +1,15 @@
 all: main
 
-main: src/main.c
+bigbrains: src/main.c
 	gcc -g src/main.c -o bin/bigbrains
 
-run: main
-	./bin/bigbrains examples/hello-world-short.bf
+build: bigbrains
+
+run_example: bigbrains
+	./bin/bigbrains run examples/hello-world-short.bf
+
+compile_example: bigbrains
+	./bin/bigbrains build examples/hello-world-short.bf
 
 clean: 
-	rm -v main
+	rm -v bin/bigbrains
