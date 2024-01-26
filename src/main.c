@@ -251,12 +251,31 @@ Operation* lex_source(FILE *cursor, size_t *len) {
     return tokens;
 }
 
+void extend_tape(int **tape, size_t *size, size_t extension) {
+    size_t new_size = (*size) + extension;
+    int *new_tape = (int*) malloc(new_size*sizeof(int));
+
+    // Write old data to new tape
+    for (size_t ind = 0; ind < (*size); ind++) {
+        new_tape[ind] = (*tape)[ind];
+    }
+    for (size_t ind = *size; ind < new_size; ind++) {
+        new_tape[ind] = 0;
+    }
+    if (*size > 0) {
+        free(*tape);
+    }
+    *tape = new_tape;
+    *size = new_size;
+}
+
 void execute(Operation *tokens, size_t token_num) {
     Program prog = {};
-    int data[1000];
-    for (int i = 0; i < 1000; i++) {
-        data[i] = 0;
-    }
+
+    size_t tape_chunk = 1024;
+    size_t data_size = 0;
+    int *data;
+
     prog.head = 0;
     prog.pos = 0;
     prog.data = data;
@@ -268,6 +287,10 @@ void execute(Operation *tokens, size_t token_num) {
     size_t total_ops = 0;
     while (program_running) {
         total_ops++;
+        if (prog.head >= data_size) {
+            extend_tape(&prog.data, &data_size, tape_chunk);
+        }
+
         op = prog.ops[prog.pos];
 
         switch (op.code) {
@@ -326,33 +349,36 @@ void execute(Operation *tokens, size_t token_num) {
 }
 
 int main(int args, char **argv) {
-    if (args < 2) {
+    if (args < 3) {
         printf("Need input file as argument\n");
         return 1;
     }
-    else if (args > 3) {
+    else if (args > 4) {
         printf("Too many input arguments\n");
         return 1;
     }
-    char *file = argv[1];
+    char *command = argv[1];
+    char *file = argv[2];
 
     FILE* cursor;
     size_t token_num;
-
     // Lex source
     cursor = fopen(file, "r");
     Operation *tokens = lex_source(cursor, &token_num);
     fclose(cursor);
 
-    // Operation op;
-    // for (int i = 0; i < token_num; i++) {
-    //     op = tokens[i];
-    //     printf("%c: %d\n", op.code, op.num);
-    // }
-
-    // Transform token stream into assembly [TODO]
-    // Instead just execute for now
-    execute(tokens, token_num);
+    if (strcmp(command, "run") == 0) {
+        // Execute interpreter
+        execute(tokens, token_num);
+    }
+    else if (strcmp(command, "build") == 0) {
+        printf("TODO\n");
+        return 1;
+    }
+    else {
+        printf("Command not recognized; use 'build' or 'run'.\n");
+        return 1;
+    }
 
     // Clean up
     free(tokens);
