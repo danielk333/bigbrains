@@ -1,15 +1,23 @@
-all: main
+CFLAGS := -g
+LFLAGS :=
 
-bigbrains: src/main.c
-	gcc -g src/main.c -o bin/bigbrains
+BIN_PATH := bin
+SRC_PATH := src
 
-build: bigbrains
+SRC_FILES := main.c
+SRC := $(addprefix $(SRC_PATH)/,$(SRC_FILES))
 
-run_example: bigbrains
-	./bin/bigbrains run examples/hello-world-short.bf
+all: $(BIN_PATH)/bigbrains
+build: $(BIN_PATH)/bigbrains
 
-compile_example: bigbrains
-	./bin/bigbrains build examples/hello-world-short.bf
+$(BIN_PATH)/bigbrains: $(SRC)
+	gcc $(LFLAGS) $(CFLAGS) -o $@ $(SRC)
+
+run_example: $(BIN_PATH)/bigbrains
+	./$(BIN_PATH)/bigbrains run examples/hello-world-short.bf
+
+compile_example: $(BIN_PATH)/bigbrains
+	./$(BIN_PATH)/bigbrains build examples/hello-world-short.bf
 
 clean: 
-	rm -v bin/bigbrains
+	rm -v $(BIN_PATH)/bigbrains

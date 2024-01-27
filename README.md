@@ -10,8 +10,8 @@ Idea is simple and quite stupid:
   4) Profit
 - If compiling: 
   1) Lex the brainfuck code
-  2) Transform token stream to flat assembler (fasm) code
-  3) Write fasm code to file and compile fasm code to machine code
+  2) Transform token stream to a specific instruction set: c or assembler (fasm) code
+  3) Write instruction code to file and compile instructions to machine code
   4) Execute machine code at your convenience
   5) ????
   6) Profit
@@ -44,8 +44,3 @@ Interpret and run brainfuck
 ```bash
 ./bin/bigbrains run examples/hello-world-short.bf
 ```
-
-## TODO
-
-- [ ] Currently just executes the code, choose assembly type and turn token-stream into that
-- [ ] Maybe https://flatassembler.net/ ?
