@@ -2,22 +2,32 @@ CFLAGS := -g
 LFLAGS :=
 
 BIN_PATH := bin
-SRC_PATH := src
 
-SRC_FILES := main.c
-SRC := $(addprefix $(SRC_PATH)/,$(SRC_FILES))
+SRC := src/main.c src/interpreter.c src/compiler.c
 
-all: $(BIN_PATH)/bigbrains
-build: $(BIN_PATH)/bigbrains
+TOOLS := bin/embedder
 
-$(BIN_PATH)/bigbrains: $(SRC)
-	gcc $(LFLAGS) $(CFLAGS) -o $@ $(SRC)
+all: bin/bigbrains
+build: bin/bigbrains
+tools: $(TOOLS)
 
-run_example: $(BIN_PATH)/bigbrains
-	./$(BIN_PATH)/bigbrains run examples/hello-world-short.bf
+bin/bigbrains: $(TOOLS) $(SRC)
+	mv src/{,_}interpreter_source.c
+	bin/embedder src/interpreter.c interpreter_source > src/interpreter_source.c
+	
+	gcc $(LFLAGS) $(CFLAGS) -o $@ src/main.c
+	
+	rm src/interpreter_source.c
+	mv src/{_,}interpreter_source.c
 
-compile_example: $(BIN_PATH)/bigbrains
-	./$(BIN_PATH)/bigbrains build examples/hello-world-short.bf
+bin/embedder: src/embedder.c
+	gcc $(LFLAGS) $(CFLAGS) -o $@ $<
+
+run_example: bin/bigbrains
+	./bin/bigbrains run examples/hello-world-short.bf
+
+compile_example: bin/bigbrains
+	./bin/bigbrains build examples/hello-world-short.bf
 
 clean: 
-	rm -v $(BIN_PATH)/bigbrains
+	rm -v bin/bigbrains

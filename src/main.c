@@ -1,11 +1,9 @@
-#include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "interpreter.c"
+#include "compiler.c"
 
 // #define DEBUG
 // #define FULL_DEBUG
@@ -212,7 +210,7 @@ Operation* lex_source(FILE *cursor, size_t *len) {
 void usage() {
     printf("Usage:\n");
     printf("bigbrains run INPUT_FILE\n");
-    printf("bigbrains build INPUT_FILE [--arch=(c|fasm)]\n");
+    printf("bigbrains build INPUT_FILE [--instruction_set=(c|fasm)]\n");
 }
 
 int main(int args, char **argv) {
@@ -229,15 +227,15 @@ int main(int args, char **argv) {
     char *command = argv[1];
     char *file = argv[2];
     char *opt;
-    int instructions = 0;
+    int instruction_set = 0;
     if (args == 4) {
         opt = argv[3];
-        if (strncmp(opt, "--instructions=", 7) == 0) {
-            if (strcmp((opt + 7), "c") == 0) {
-                instructions = 0;
+        if (strncmp(opt, "--instruction_set=", 18) == 0) {
+            if (strcmp((opt + 18), "c") == 0) {
+                instruction_set = 0;
             }
-            else if (strcmp((opt + 7), "fasm") == 0) {
-                instructions = 1;
+            else if (strcmp((opt + 18), "fasm") == 0) {
+                instruction_set = 1;
                 printf("TODO\n");
                 return 1;
             }
@@ -264,7 +262,12 @@ int main(int args, char **argv) {
         execute(tokens, token_num);
     }
     else if (strcmp(command, "build") == 0) {
-
+        if(instruction_set == 0) {            
+            char *tmp_path = "_tmp.c";
+            char *out_path;
+            sprintf(out_path, "%s.compiled", file);
+            compile_c(tmp_path, out_path);
+        }
     }
     else {
         printf("Command not recognized; use 'build' or 'run'.\n");
