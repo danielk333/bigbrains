@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "interpreter.c"
+// #include "interpreter.c"
 #include "compiler.c"
 
 // #define DEBUG
@@ -264,9 +264,9 @@ int main(int args, char **argv) {
     else if (strcmp(command, "build") == 0) {
         if(instruction_set == 0) {            
             char *tmp_path = "_tmp.c";
-            char *out_path;
-            sprintf(out_path, "%s.compiled", file);
-            compile_c(tmp_path, out_path);
+            char out_path[80];
+            sprintf(out_path, "%s.bb", file);
+            compile_c(tokens, token_num, tmp_path, out_path);
         }
     }
     else {
