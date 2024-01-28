@@ -85,7 +85,6 @@ void execute(Operation *tokens, size_t token_num) {
 
     bool program_running = true;
     Operation op;
-    char in;
     size_t total_ops = 0;
     while (program_running) {
         total_ops++;
@@ -115,7 +114,7 @@ void execute(Operation *tokens, size_t token_num) {
                 break;
             case Input:
                 for (int i = 0; i < op.num; i++) {
-                    scanf("%c", &in);
+                    prog.data[prog.head] = getchar();
                 }
                 break;
             case GotoIfZero:
