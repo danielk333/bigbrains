@@ -236,8 +236,6 @@ int main(int args, char **argv) {
             }
             else if (strcmp((opt + 18), "fasm") == 0) {
                 instruction_set = 1;
-                printf("TODO\n");
-                return 1;
             }
             else {
                 printf("Given instruction set not supported\n");
@@ -262,11 +260,14 @@ int main(int args, char **argv) {
         execute(tokens, token_num);
     }
     else if (strcmp(command, "build") == 0) {
+        char out_path[80];
+        sprintf(out_path, "%s.bb", file);
         if(instruction_set == 0) {            
             char *tmp_path = "_tmp.c";
-            char out_path[80];
-            sprintf(out_path, "%s.bb", file);
             compile_c(tokens, token_num, tmp_path, out_path);
+        }
+        else if (instruction_set == 1) {
+            compile_fasm(tokens, token_num, out_path);
         }
     }
     else {

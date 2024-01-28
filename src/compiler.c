@@ -38,3 +38,8 @@ void compile_c(Operation *tokens, size_t token_num, char* tmp_path, char* out_pa
     sprintf(syscall, "rm -v %s", tmp_path);
     system(syscall);
 }
+
+void compile_fasm(Operation *tokens, size_t token_num, char* out_path) {
+    printf("TODO!");
+    exit(1);
+}
