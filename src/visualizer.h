@@ -1,6 +1,8 @@
 #ifndef VISUALIZER_H_
 #define VISUALIZER_H_
 
+#include <stdio.h>
+
 #include "raylib.h"
 #include "lexer.h"
 

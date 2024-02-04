@@ -8,6 +8,8 @@ Idea is simple and quite stupid:
   2) Simulate a tape and execute token stream 
   3) ????
   4) Profit
+
+TODO: add in the interpreting pre-stuffs to transpiled code, currently does not compile
 - If transpiling: 
   1) Lex the brainfuck code
   2) Transform token stream to a specific instruction set: c or assembler (fasm) code
