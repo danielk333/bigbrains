@@ -1,56 +1,4 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-// #define DEBUG
-// #define FULL_DEBUG
-
-typedef enum OpCode {
-    Right = '>',
-    Left = '<',
-    Increment = '+',
-    Decrement = '-',
-    Output = '.',
-    Input = ',',
-    GotoIfZero = '[',
-    GotoIfNonezero = ']',
-    Comment = 'C',
-} OpCode;
-
-
-typedef struct Operation {
-    OpCode code;
-    unsigned int num;
-    size_t target;
-} Operation;
-
-
-typedef struct Propgram {
-    Operation *ops;
-    int *data;
-    size_t head;
-    size_t pos;
-} Program;
-
-
-OpCode get_OpCode(char ch) {
-    OpCode code;
-    switch (ch) {
-        case '>':
-        case '<':
-        case '+':
-        case '-':
-        case '.':
-        case ',':
-        case '[':
-        case ']':
-            code = ch;
-            return code;
-        default:
-            return Comment;
-    }
-}
-
+#include "interpreter.h"
 
 void extend_tape(int **tape, size_t *size, size_t extension) {
     size_t new_size = (*size) + extension;
@@ -71,8 +19,8 @@ void extend_tape(int **tape, size_t *size, size_t extension) {
 }
 
 
-void execute(Operation *tokens, size_t token_num) {
-    Program prog = {};
+void execute_token_stream(struct Operation *tokens, size_t token_num) {
+    struct Propgram prog = {};
 
     size_t tape_chunk = 1024;
     size_t data_size = 0;
@@ -84,7 +32,7 @@ void execute(Operation *tokens, size_t token_num) {
     prog.ops = tokens;
 
     bool program_running = true;
-    Operation op;
+    struct Operation op;
     size_t total_ops = 0;
     while (program_running) {
         total_ops++;

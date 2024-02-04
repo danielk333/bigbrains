@@ -1,33 +1,35 @@
-CFLAGS := -g
-LFLAGS :=
+CFLAGS := 
+LDFLAGS := -lraylib
 
 BIN_PATH := bin
+SRC_PATH := src
+OBJ_PATH := obj
 
-SRC := src/main.c src/interpreter.c src/compiler.c
+TARGET_EXEC := $(BIN_PATH)/bigbrains
 
-TOOLS := bin/embedder
+SRCS := $(wildcard $(SRC_PATH)/*.c)
+OBJS := $(addprefix $(OBJ_PATH)/,$(notdir $(SRCS:.c=.o)))
 
-all: bin/bigbrains
-build: bin/bigbrains
-tools: $(TOOLS)
+all: $(TARGET_EXEC)
+build: $(TARGET_EXEC)
 
-bin/bigbrains: $(TOOLS) $(SRC)
-	mv src/{,_}interpreter_source.c
-	bin/embedder src/interpreter.c interpreter_source > src/interpreter_source.c
-	
-	gcc $(LFLAGS) $(CFLAGS) -o $@ src/main.c
-	
-	rm src/interpreter_source.c
-	mv src/{_,}interpreter_source.c
+$(TARGET_EXEC): $(OBJS)
+	gcc $(OBJS) -o $@ $(LDFLAGS)
 
-bin/embedder: src/embedder.c
-	gcc $(LFLAGS) $(CFLAGS) -o $@ $<
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+	gcc $(CFLAGS) -c $< -o $@
+
 
 run_example: bin/bigbrains
 	./bin/bigbrains run examples/hello-world-short.bf
 
-compile_example: bin/bigbrains
-	./bin/bigbrains build examples/hello-world-short.bf
+transpile_example: bin/bigbrains
+	./bin/bigbrains transpile examples/hello-world-short.bf
+
+visualize_example: bin/bigbrains
+	./bin/bigbrains visualize examples/hello-world-short.bf
+
 
 clean: 
-	rm -v bin/bigbrains
+	rm -v $(TARGET_EXEC)
+	rm -v $(OBJ_PATH)/*.o

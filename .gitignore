@@ -1,2 +1,4 @@
 bin/*
-examples/*.bb
+examples/*.c
+examples/*.asm
+obj/*.o
