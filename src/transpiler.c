@@ -12,11 +12,10 @@ void write_ops(struct Operation *tokens, size_t token_num, FILE* cursor) {
     fprintf(cursor, "};\n");
 }
 
-void write_instructions_c(struct Operation *tokens, size_t token_num, char* tmp_path) {
+void write_instructions_c(struct Operation *tokens, size_t token_num, char* out_path) {
     FILE* cursor;
-    printf("Writing temp source to: %s", tmp_path);
-    cursor = fopen(tmp_path, "w");
-    // fprintf(cursor, "%s\n", interpreter_source);
+    printf("Writing temp source to: %s", out_path);
+    cursor = fopen(out_path, "w");
     fprintf(cursor, "int main() {\n");
     write_ops(tokens, token_num, cursor);
     fprintf(cursor, "execute(tokens, token_num);\n");
@@ -24,8 +23,8 @@ void write_instructions_c(struct Operation *tokens, size_t token_num, char* tmp_
     fclose(cursor);
 }
 
-void transpile_c(struct Operation *tokens, size_t token_num, char* tmp_path, char* out_path) {
-    write_instructions_c(tokens, token_num, tmp_path);
+void transpile_c(struct Operation *tokens, size_t token_num, char* out_path) {
+    write_instructions_c(tokens, token_num, out_path);
 }
 
 void transpile_fasm(struct Operation *tokens, size_t token_num, char* out_path) {

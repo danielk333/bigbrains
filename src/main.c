@@ -8,12 +8,29 @@ enum Command {
 };
 
 
-void usage() {
+void usage(enum Command cmd) {
     printf("Usage:\n");
+    switch (cmd) {
+        case Run:
+            printf("bigbrains run INPUT_FILE\n");
+            break;
+        case Transpile:
+            printf("bigbrains transpile INPUT_FILE [--instruction_set=(c|fasm)]\n");
+            break;
+        case Visualize:
+            printf("bigbrains visualize INPUT_FILE\n");
+            break;
+        default:
+            printf("Command not recognized\n");
+            exit(1);
+    }
+}
 
-    printf("bigbrains run INPUT_FILE\n");
-    printf("bigbrains transpile INPUT_FILE [--instruction_set=(c|fasm)]\n");
-    printf("bigbrains visualize INPUT_FILE\n");
+
+void all_usage() {
+    usage(Run); 
+    usage(Transpile);
+    usage(Visualize);
 }
 
 
@@ -39,21 +56,37 @@ enum Command get_command(char *name) {
     }
     else {
         printf("Command not recognized\n");
-        usage();
+        all_usage();
         exit(1);
     }
 }
 
 
+
+void extract_stem(char *file, char *stem) {
+    // last  '.' in *file
+    const char *dot = strrchr(file, '.');
+
+    if (dot != NULL) {
+        size_t length = dot - file;
+        strncpy(stem, file, length);
+        stem[length] = '\0';
+    } else {
+        strcpy(stem, file);
+    }
+}
+
+
+
 int run(int args, char **argv) {
     if (args < 3) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Run);
         return 1;
     }
     else if (args > 4) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Run);
         return 1;
     }
     char *file;
@@ -78,12 +111,12 @@ int run(int args, char **argv) {
 int transpile(int args, char **argv) {
     if (args < 3) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Transpile);
         return 1;
     }
     else if (args > 5) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Transpile);
         return 1;
     }
 
@@ -103,13 +136,13 @@ int transpile(int args, char **argv) {
             }
             else {
                 printf("Given instruction set not supported\n");
-                usage();
+                usage(Transpile);
                 return 1;
             }
         }
         else {
             printf("option format not recognized\n");
-            usage();
+            usage(Transpile);
             return 1;
         }
     }
@@ -121,11 +154,11 @@ int transpile(int args, char **argv) {
     struct Operation *tokens = lex_source(cursor, &token_num);
     fclose(cursor);
 
-    char out_path[80];
-    sprintf(out_path, "%s.bb", file);
-    if(instruction_set == 0) {            
-        char *tmp_path = "_tmp.c";
-        transpile_c(tokens, token_num, tmp_path, out_path);
+    char out_path[256];
+    extract_stem(file, out_path);
+    sprintf(out_path, "%s.c", out_path);
+    if(instruction_set == 0) {
+        transpile_c(tokens, token_num, out_path);
     }
     else if (instruction_set == 1) {
         transpile_fasm(tokens, token_num, out_path);
@@ -139,17 +172,17 @@ int transpile(int args, char **argv) {
 int visualize(int args, char **argv) {
     if (args < 3) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Visualize);
         return 1;
     }
     else if (args > 4) {
         printf("Too many input arguments\n");
-        usage();
+        usage(Visualize);
         return 1;
     }
     size_t token_num;
     FILE *cursor;
-    char *file = argv[1];
+    char *file = argv[2];
 
     if (exists(file) == 1) {
         cursor = fopen(file, "r");
@@ -174,7 +207,7 @@ int visualize(int args, char **argv) {
 int main(int args, char **argv) {
     if (args < 2) {
         printf("Need a sub-command argument\n");
-        usage();
+        all_usage();
         return 1;
     }
     char *command = argv[1];
@@ -193,7 +226,7 @@ int main(int args, char **argv) {
             break;
         default:
             printf("Command not recognized\n");
-            usage();
+            all_usage();
             result = 1;
     }
     return result;
